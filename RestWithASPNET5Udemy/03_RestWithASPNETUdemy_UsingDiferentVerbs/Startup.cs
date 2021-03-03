@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Services;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Services.Implementations;
 
 namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
 {
@@ -28,6 +30,10 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
         {
 
             services.AddControllers();
+
+            // Dependency Injection
+            services.AddScoped<IPersonService, PersonServiceImplementation>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "_03_RestWithASPNETUdemy_UsingDiferentVerbs", Version = "v1" });
