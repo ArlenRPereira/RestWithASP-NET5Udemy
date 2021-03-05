@@ -1,9 +1,9 @@
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Model;
 using System.Collections.Generic;
 
-namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Services
+namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Business
 {
-    public interface IPersonService
+    public interface IPersonBusiness
     {
         Person Create(Person person);
 

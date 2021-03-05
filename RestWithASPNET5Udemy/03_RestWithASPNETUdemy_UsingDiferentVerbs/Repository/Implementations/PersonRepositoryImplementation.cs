@@ -6,13 +6,13 @@ using System;
 using System.Threading;
 using System.Linq;
 
-namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Services.Implementations
+namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Repository.Implementations
 {
-    public class PersonServiceImplementation : IPersonService
+    public class PersonRepositoryImplementation : IPersonRepository
     {
         private MySQLContext _context;
 
-        public PersonServiceImplementation(MySQLContext context)
+        public PersonRepositoryImplementation(MySQLContext context)
         {
             _context = context;
         }
@@ -82,7 +82,7 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Services.Implementations
             }
         }
 
-        private bool Exists(long id)
+        public bool Exists(long id)
         {
             return _context.Persons.Any(p => p.Id.Equals(id));
         }

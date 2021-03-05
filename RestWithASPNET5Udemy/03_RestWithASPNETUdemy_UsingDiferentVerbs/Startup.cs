@@ -12,8 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Services;
-using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Services.Implementations;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Business;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Business.Implementations;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Repository;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Repository.Implementations;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Model.Context;
 using MySql.EntityFrameworkCore.Extensions;
 
@@ -41,7 +43,8 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
             services.AddApiVersioning();
 
             // Dependency Injection
-            services.AddScoped<IPersonService, PersonServiceImplementation>();
+            services.AddScoped<IPersonBusiness, PersonBusinessImplementation>();
+            services.AddScoped<IPersonRepository, PersonRepositoryImplementation>();
 
             services.AddSwaggerGen(c =>
             {
