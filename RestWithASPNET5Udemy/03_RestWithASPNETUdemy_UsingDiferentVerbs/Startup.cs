@@ -15,20 +15,29 @@ using Microsoft.OpenApi.Models;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Business;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Business.Implementations;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Repository;
-using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Repository.Implementations;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Repository.Generic;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Model.Context;
 using MySql.EntityFrameworkCore.Extensions;
+using Serilog;
 
 namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
 
         public IConfiguration Configuration { get; }
+
+        public IWebHostEnvironment Environment { get; }
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        {
+            Configuration = configuration;
+            Environment = environment;
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -39,12 +48,19 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
             var connection = Configuration["MySQLConnection:MySQLConnectionString"];
             services.AddDbContext<MySQLContext>(options => options.UseMySQL(connection));
 
+            if (Environment.IsDevelopment())
+            {
+                MigrateDatabase(connection);
+            }
+
             // Versioning API
             services.AddApiVersioning();
 
             // Dependency Injection
             services.AddScoped<IPersonBusiness, PersonBusinessImplementation>();
-            services.AddScoped<IPersonRepository, PersonRepositoryImplementation>();
+            services.AddScoped<IBookBusiness, BookBusinessImplementation>();
+            
+            services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
             services.AddSwaggerGen(c =>
             {
@@ -72,6 +88,25 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private void MigrateDatabase(string connection)
+        {
+            try
+            {
+                var envolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connection);
+                var evolve = new Evolve.Evolve(envolveConnection, msg => Log.Information(msg))
+                {
+                    Locations = new List<string> { "db/migrations", "db/dataset" },
+                    IsEraseDisabled = true,
+                };
+                evolve.Migrate();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Database migration failed ", ex);
+                throw;
+            }
         }
     }
 }
