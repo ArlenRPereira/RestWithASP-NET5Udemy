@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +14,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Services;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Services.Implementations;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Model.Context;
+using MySql.EntityFrameworkCore.Extensions;
 
 namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
 {
@@ -30,6 +33,12 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
         {
 
             services.AddControllers();
+
+            var connection = Configuration["MySQLConnection:MySQLConnectionString"];
+            services.AddDbContext<MySQLContext>(options => options.UseMySQL(connection));
+
+            // Versioning API
+            services.AddApiVersioning();
 
             // Dependency Injection
             services.AddScoped<IPersonService, PersonServiceImplementation>();
