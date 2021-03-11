@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Model;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Business;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Data.VO;
 
 namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Controllers
 {
@@ -38,14 +39,14 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Book book)
+        public IActionResult Post([FromBody] BookVO book)
         {
             if (book == null) return BadRequest();
             return Ok(_bookBusiness.Create(book));
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] Book book)
+        public IActionResult Put([FromBody] BookVO book)
         {
             if (book == null) return BadRequest();
             return Ok(_bookBusiness.Update(book));
