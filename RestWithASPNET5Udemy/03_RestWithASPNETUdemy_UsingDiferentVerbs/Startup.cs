@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,13 +8,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.Net.Http.Headers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Serilog;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Business;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Business.Implementations;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Repository;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Repository.Generic;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Model.Context;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Hypermedia.Enricher;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Hypermedia.Filters;
 using MySql.EntityFrameworkCore.Extensions;
-using Serilog;
+
 
 namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
 {
@@ -52,6 +56,20 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
             {
                 MigrateDatabase(connection);
             }
+
+            services.AddMvc(options => 
+            {
+                options.RespectBrowserAcceptHeader = true;
+
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("application/xml"));
+                options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/json"));
+            })
+            .AddXmlSerializerFormatters();
+
+            var filterOptions = new HyperMediaFilterOptions();
+            filterOptions.ContentResponseEnricherList.Add(new PersonEnricher());
+
+            services.AddSingleton(filterOptions);
 
             // Versioning API
             services.AddApiVersioning();
@@ -87,6 +105,7 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute("DefaultApi", "{controller=values}/{id?}");
             });
         }
 

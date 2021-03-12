@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Model;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Business;
 using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Data.VO;
+using _03_RestWithASPNETUdemy_UsingDiferentVerbs.Hypermedia.Filters;
 
 namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Controllers
 {
@@ -25,12 +26,14 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Controllers
         }
 
         [HttpGet]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get()
         {
             return Ok(_bookBusiness.FindAll());
         }
 
         [HttpGet("{id}")]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Get(long id)
         {
             var book = _bookBusiness.FindByID(id);
@@ -39,6 +42,7 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Controllers
         }
 
         [HttpPost]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Post([FromBody] BookVO book)
         {
             if (book == null) return BadRequest();
@@ -46,6 +50,7 @@ namespace _03_RestWithASPNETUdemy_UsingDiferentVerbs.Controllers
         }
 
         [HttpPut]
+        [TypeFilter(typeof(HyperMediaFilter))]
         public IActionResult Put([FromBody] BookVO book)
         {
             if (book == null) return BadRequest();
